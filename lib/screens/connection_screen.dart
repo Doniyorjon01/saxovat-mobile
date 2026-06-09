@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../api/api_client.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
 
 class ConnectionScreen extends StatefulWidget {
   const ConnectionScreen({super.key});
@@ -24,10 +25,7 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
             '(${data['env']})\nPartner: ${data['partner']}';
       });
     } catch (e) {
-      setState(() {
-        _ok = false;
-        _status = 'Could not reach backend:\n$e';
-      });
+      setState(() { _ok = false; _status = 'Could not reach backend:\n$e'; });
     } finally {
       setState(() { _loading = false; });
     }
@@ -45,61 +43,48 @@ class _ConnectionScreenState extends State<ConnectionScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('Sahovat', style: text.displayLarge),
+                Text('Sahovat', style: AppTheme.serif(size: 32)),
                 const SizedBox(height: 4),
-                Text(
-                  'Xayriya platformasi',
-                  style: text.bodyMedium?.copyWith(color: AppColors.muted),
-                ),
+                Text('Xayriya platformasi',
+                    style: text.bodyMedium?.copyWith(color: AppColors.muted)),
                 const SizedBox(height: 32),
-
-                // Status card
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(14),
+                    color: AppColors.n3,
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     children: [
-                      Icon(
-                        _ok ? Icons.check_circle : Icons.cloud_off,
-                        size: 40,
-                        color: _ok ? AppColors.emerald : AppColors.muted,
-                      ),
+                      Icon(_ok ? Icons.check_circle : Icons.cloud_off,
+                          size: 40,
+                          color: _ok ? AppColors.gr1 : AppColors.muted),
                       const SizedBox(height: 12),
-                      Text(
-                        _status,
-                        textAlign: TextAlign.center,
-                        style: text.bodyMedium,
-                      ),
+                      Text(_status,
+                          textAlign: TextAlign.center, style: text.bodyMedium),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Primary emerald button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: _loading ? null : _check,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.emerald,
+                      backgroundColor: AppColors.b1,
                       foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     child: _loading
                         ? const SizedBox(
                             height: 20, width: 20,
                             child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white,
-                            ),
-                          )
+                                strokeWidth: 2, color: Colors.white))
                         : const Text('Check backend connection'),
                   ),
                 ),
