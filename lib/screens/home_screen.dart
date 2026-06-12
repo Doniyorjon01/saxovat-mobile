@@ -14,11 +14,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // null = "All"
   String? _category;
   late Future<List<Campaign>> _future;
 
-  // (category value, label) — null value is the "All" chip.
   static const _categories = <(String?, String)>[
     (null, 'All'),
     ('medical', 'Medical'),
@@ -86,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Greeting row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -100,8 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           letterSpacing: 0.8,
                           color: AppColors.muted)),
                   const SizedBox(height: 3),
-                  Text('Assalomu alaykum 👋',
-                      style: AppTheme.serif(size: 20)),
+                  Text('Assalomu alaykum 👋', style: AppTheme.serif(size: 20)),
                 ],
               ),
               Row(
@@ -125,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 14),
-          // Partner stats card — STATIC PLACEHOLDER until /stats endpoint exists.
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -161,7 +156,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          // Certified board card
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -258,8 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 22, fontWeight: FontWeight.w700, color: color),
                 children: [
                   TextSpan(
-                      text: unit,
-                      style: const TextStyle(fontSize: 13)),
+                      text: unit, style: const TextStyle(fontSize: 13)),
                 ],
               ),
             ),
@@ -340,8 +333,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
         if (snapshot.hasError) {
-          return _message(
-              Icons.cloud_off, 'Could not load campaigns',
+          return _message(Icons.cloud_off, 'Could not load campaigns',
               snapshot.error.toString());
         }
         final campaigns = snapshot.data ?? [];
@@ -382,7 +374,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // STATIC content (not backend data) — a daily Quran verse, as in the mockup.
   Widget _verseCard(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),

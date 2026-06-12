@@ -45,7 +45,6 @@ class Campaign {
       coverImageUrl: json['cover_image_url'] as String?,
       anonymousTitle: json['anonymous_title'] as String?,
       regionId: json['region_id'] as String,
-      // Defensive: these are ints, but JSON numbers can arrive as num.
       targetAmountTiyin: (json['target_amount_tiyin'] as num).toInt(),
       raisedAmountTiyin: (json['raised_amount_tiyin'] as num).toInt(),
       donorCount: (json['donor_count'] as num).toInt(),
@@ -53,14 +52,11 @@ class Campaign {
     );
   }
 
-  /// The title to show publicly — prefer the anonymous title to protect
-  /// the beneficiary's identity, fall back to the Uzbek title.
   String get displayTitle =>
       (anonymousTitle != null && anonymousTitle!.isNotEmpty)
           ? anonymousTitle!
           : titleUz;
 
-  /// Progress 0.0–1.0 for the progress bar (clamped so it never overflows).
   double get progress {
     if (targetAmountTiyin <= 0) return 0;
     return (raisedAmountTiyin / targetAmountTiyin).clamp(0.0, 1.0);

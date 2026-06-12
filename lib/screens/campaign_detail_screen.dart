@@ -5,9 +5,29 @@ import '../widgets/money.dart';
 import '../api/require_auth.dart';
 import 'donate_screen.dart';
 
-class CampaignDetailScreen extends StatelessWidget {
+class CampaignDetailScreen extends StatefulWidget {
   final Campaign campaign;
   const CampaignDetailScreen({super.key, required this.campaign});
+
+  @override
+  State<CampaignDetailScreen> createState() => _CampaignDetailScreenState();
+}
+
+class _CampaignDetailScreenState extends State<CampaignDetailScreen> {
+  // Quick-donate presets in UZS (passed into the donate flow).
+  static const _presets = [50000, 100000, 250000, 500000];
+  int _selectedUzs = 100000;
+
+  Campaign get campaign => widget.campaign;
+
+  Future<void> _donate() async {
+    final ok = await ensureLoggedIn(context);
+    if (!ok || !context.mounted) return;
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) =>
+          DonateScreen(campaign: campaign, initialAmountUzs: _selectedUzs),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +170,76 @@ class CampaignDetailScreen extends StatelessWidget {
                   color: AppColors.muted, height: 1.6)),
           const SizedBox(height: 16),
 
-          // Docs placeholder (no backend document storage yet)
+          // Quick donate presets
+          Text('Quick donate', style: text.titleMedium),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _presets.map((a) {
+              final on = a == _selectedUzs;
+              return GestureDetector(
+                onTap: () => setState(() => _selectedUzs = a),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                  decoration: BoxDecoration(
+                    color: on ? AppColors.b1 : const Color(0x1A2563EB),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: on ? AppColors.b1 : AppColors.border),
+                  ),
+                  child: Text('${formatUzs(a * 100)} UZS',
+                      style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: on ? Colors.white : AppColors.b3)),
+                ),
+              );
+            }).toList(),
+          ),
+          const SizedBox(height: 14),
+
+          // Monthly guardianship — NOT yet supported by the backend.
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.n3,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.event_repeat_outlined,
+                    size: 20, color: AppColors.muted),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text('Monthly guardianship',
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.white)),
+                      SizedBox(height: 2),
+                      Text('Recurring monthly support · coming soon',
+                          style: TextStyle(
+                              fontSize: 11, color: AppColors.muted)),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: false,
+                  onChanged: null, // disabled until backend supports recurring
+                  activeThumbColor: AppColors.b2,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+
+          // Documents note (no public document storage for donors)
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
@@ -160,13 +249,13 @@ class CampaignDetailScreen extends StatelessWidget {
             ),
             child: Row(
               children: const [
-                Icon(Icons.check_circle_outline,
-                    size: 16, color: Color(0xFF86EFAC)),
+                Icon(Icons.lock_outline, size: 16, color: Color(0xFF86EFAC)),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    '100% of your donation goes to this campaign. '
-                    'No deductions. Verified by the Muslim Board.',
+                    'Documents are kept private to protect beneficiary '
+                    'privacy. 100% reaches the cause, verified by the '
+                    'Muslim Board.',
                     style: TextStyle(
                         color: Color(0xFF86EFAC), fontSize: 11, height: 1.5),
                   ),
@@ -176,17 +265,10 @@ class CampaignDetailScreen extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // Donate button → login if needed → donate flow
           SizedBox(
             height: 52,
             child: ElevatedButton(
-              onPressed: () async {
-                final ok = await ensureLoggedIn(context);
-                if (!ok || !context.mounted) return;
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => DonateScreen(campaign: campaign),
-                ));
-              },
+              onPressed: _donate,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.b1,
                 foregroundColor: Colors.white,

@@ -3,8 +3,8 @@ import '../api/api_client.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 
+/// Donor login / register. Auth is USERNAME-based; email is optional.
 class AuthScreen extends StatefulWidget {
-  /// Called after a successful login/register.
   final VoidCallback onAuthenticated;
   const AuthScreen({super.key, required this.onAuthenticated});
 
@@ -17,16 +17,18 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _loading = false;
   String? _error;
 
-  final _email = TextEditingController();
+  final _username = TextEditingController();
   final _name = TextEditingController();
   final _password = TextEditingController();
+  final _email = TextEditingController();
   final _phone = TextEditingController();
 
   @override
   void dispose() {
-    _email.dispose();
+    _username.dispose();
     _name.dispose();
     _password.dispose();
+    _email.dispose();
     _phone.dispose();
     super.dispose();
   }
@@ -36,14 +38,15 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       if (_isLogin) {
         await ApiClient.login(
-          email: _email.text.trim(),
+          username: _username.text.trim(),
           password: _password.text,
         );
       } else {
         await ApiClient.register(
-          email: _email.text.trim(),
+          username: _username.text.trim(),
           fullName: _name.text.trim(),
           password: _password.text,
+          email: _email.text.trim(),
           phone: _phone.text.trim(),
         );
       }
@@ -83,26 +86,27 @@ class _AuthScreenState extends State<AuthScreen> {
                 style: text.bodyMedium?.copyWith(color: AppColors.muted),
               ),
               const SizedBox(height: 28),
-
               if (!_isLogin) ...[
                 _field(_name, 'Full name', Icons.person_outline),
                 const SizedBox(height: 12),
               ],
-              _field(_email, 'Email', Icons.mail_outline,
-                  keyboard: TextInputType.emailAddress),
+              _field(_username, 'Username', Icons.alternate_email),
               const SizedBox(height: 12),
               _field(_password, 'Password', Icons.lock_outline, obscure: true),
               if (!_isLogin) ...[
+                const SizedBox(height: 12),
+                _field(_email, 'Email (optional)', Icons.mail_outline,
+                    keyboard: TextInputType.emailAddress),
                 const SizedBox(height: 12),
                 _field(_phone, 'Phone (optional)', Icons.phone_outlined,
                     keyboard: TextInputType.phone),
                 const SizedBox(height: 8),
                 Text(
-                  'Password needs 8+ characters, one uppercase letter and a digit.',
+                  'Username: 3–32 chars, starts with a letter. '
+                  'Password: 8+ chars with an uppercase letter and a digit.',
                   style: text.bodySmall,
                 ),
               ],
-
               if (_error != null) ...[
                 const SizedBox(height: 16),
                 Container(
@@ -126,7 +130,6 @@ class _AuthScreenState extends State<AuthScreen> {
                   ),
                 ),
               ],
-
               const SizedBox(height: 24),
               SizedBox(
                 height: 50,

@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import '../models/campaign.dart';
 import '../theme/app_colors.dart';
 
-/// Compact campaign card: square thumb on the left, content on the right —
-/// badges, title, progress bar, raised/left row. Matches the mockup.
+/// Compact campaign card: square thumb on the left, content on the right.
 class CampaignCard extends StatelessWidget {
   final Campaign campaign;
   final VoidCallback? onTap;
   const CampaignCard({super.key, required this.campaign, this.onTap});
 
-  /// 50000000 tiyin -> "500 000"
   String _uzs(int tiyin) {
     final s = (tiyin ~/ 100).toString();
     final buf = StringBuffer();
@@ -20,7 +18,6 @@ class CampaignCard extends StatelessWidget {
     return buf.toString();
   }
 
-  // Category → (icon, accent color), matching the mockup's category styling.
   (IconData, Color) _categoryStyle(String category) {
     switch (category) {
       case 'medical':
@@ -60,7 +57,6 @@ class CampaignCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thumb
             Container(
               width: 54,
               height: 54,
@@ -71,12 +67,10 @@ class CampaignCard extends StatelessWidget {
               child: Icon(icon, size: 24, color: accent),
             ),
             const SizedBox(width: 12),
-            // Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Badges
                   Wrap(
                     spacing: 4,
                     runSpacing: 4,
@@ -95,18 +89,15 @@ class CampaignCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  // Title
                   Text(
                     campaign.displayTitle,
                     style: text.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      height: 1.3,
+                      fontWeight: FontWeight.w500, height: 1.3,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  // Progress
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: LinearProgressIndicator(
@@ -117,7 +108,6 @@ class CampaignCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  // Raised / left
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -125,8 +115,7 @@ class CampaignCard extends StatelessWidget {
                           style: text.bodySmall),
                       Text('${_uzs(remaining)} left',
                           style: text.bodySmall?.copyWith(
-                            color: AppColors.gr1,
-                            fontWeight: FontWeight.w600,
+                            color: AppColors.gr1, fontWeight: FontWeight.w600,
                           )),
                     ],
                   ),

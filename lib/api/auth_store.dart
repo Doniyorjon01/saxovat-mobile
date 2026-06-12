@@ -1,10 +1,7 @@
 import '../models/donor.dart';
 
 /// In-memory session store for the logged-in donor.
-///
-/// DEV NOTE: tokens live only while the app is open. For production we'll
-/// replace this single class with flutter_secure_storage — call sites won't
-/// change. Browser localStorage is intentionally not used here.
+/// DEV NOTE: tokens live only while the app is open. Production → secure storage.
 class AuthStore {
   AuthStore._();
   static final AuthStore instance = AuthStore._();
